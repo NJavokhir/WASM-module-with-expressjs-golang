@@ -1,0 +1,22 @@
+{
+  "name": "express-app",
+  "version": "0.0.0",
+  "private": true,
+  "scripts": {
+    "start": "node ./bin/www"
+  },
+  "dependencies": {
+    "@wasmer/wasm-transformer": "^0.12.0",
+    "cookie-parser": "~1.4.4",
+    "crypto-browserify": "^3.12.0",
+    "debug": "~2.6.9",
+    "express": "~4.16.1",
+    "get-random-values": "^2.1.0",
+    "globalthis": "^1.0.3",
+    "http-errors": "~1.6.3",
+    "jade": "~1.11.0",
+    "module": "^1.2.5",
+    "morgan": "~1.9.1",
+    "polyfill-crypto.getrandomvalues": "^1.0.0"
+  }
+}
