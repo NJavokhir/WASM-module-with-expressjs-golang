@@ -1,12 +1,15 @@
+// necessary modules and middlewares
 var createError = require('http-errors');
 var express = require('express');
 var path = require('path');
 var cookieParser = require('cookie-parser');
 var logger = require('morgan');
 
+// route handlers
 var indexRouter = require('./routes/index');
 var usersRouter = require('./routes/users');
 
+// to create an instance
 var app = express();
 
 // view engine setup
@@ -20,6 +23,7 @@ app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 app.use(express.static('public'));
 
+// sets up routes
 app.get('/', indexRouter);
 app.use('/users', usersRouter);
 
