@@ -18,30 +18,9 @@ app.use(express.json());
 app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
-
-const fs = require('fs');
-const crypto = require("crypto").webcrypto;
-globalThis.crypto = crypto;
-require('./public/wasm/wasm_exec.js');
-
-function loadWebAssembly() {
-  const wasmModule = fs.readFileSync('./public/wasm/main.wasm');
-    const go = new Go();
-    const importObject = go.importObject;
-    WebAssembly.instantiate(wasmModule, importObject).then((results) => {
-      const instance = results.instance
-      go.run(instance);
-    });
-}
-
-loadWebAssembly();
-
 app.use(express.static('public'));
-app.get('/', (req, res) => {
-  const sum = addTwoNumbers();
-  res.send(`Sum: ${sum}`);
-});
 
+app.get('/', indexRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

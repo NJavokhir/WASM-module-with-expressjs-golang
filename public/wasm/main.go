@@ -5,8 +5,8 @@ import (
 )
 
 func addTwoNumbers(this js.Value, args []js.Value) interface{} {
-	a := 2
-	b := 4
+	a := args[0].Int()
+	b := args[1].Int()
 	sum := a + b
 	return js.ValueOf(sum)
 }
