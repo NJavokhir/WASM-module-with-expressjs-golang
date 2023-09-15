@@ -2,13 +2,12 @@ var express = require('express');
 var router = express.Router();
 
 const fs = require('fs');
-const internal = require('stream');
 const crypto = require("crypto").webcrypto;
 globalThis.crypto = crypto;
-require('../public/wasm/wasm_exec.js');
+require('../golang/wasm/wasm_exec.js');
 
 function loadWebAssembly() {
-  const wasmModule = fs.readFileSync('./public/wasm/main.wasm');
+  const wasmModule = fs.readFileSync('./golang/wasm/main.wasm');
     const go = new Go();
     const importObject = go.importObject;
     WebAssembly.instantiate(wasmModule, importObject).then((results) => {

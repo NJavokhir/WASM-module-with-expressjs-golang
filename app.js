@@ -28,10 +28,6 @@ app.use(express.static('public'));
 app.get('/', indexRouter);
 app.use('/poems', poemsRouter);
 app.use('/users', usersRouter);
-app.get('/about', (req, res) => {
-  res.send('This is the about page.');
-});
-
 
 // catch 404 and forward to error handler
 app.use(function(req, res, next) {

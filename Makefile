@@ -1,5 +1,8 @@
 start:
 	npm run start
 
-update_wasm:
-	GOARCH=wasm GOOS=js go build --o public/wasm/main.wasm public/wasm/main.go
+wasm:
+	GOARCH=wasm GOOS=js go build --o golang/wasm/main.wasm golang/wasm/main.go
+
+server: golang/server.go
+	go run $<
