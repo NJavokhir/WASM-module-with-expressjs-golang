@@ -3,3 +3,6 @@ extends layout
 block content
   h1= title
   p Addition is #{title}
+
+  div.container= title 
+  button.next_poem_style(onclick="nextPoem()") Next poem

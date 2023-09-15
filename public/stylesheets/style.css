@@ -6,3 +6,15 @@ body {
 a {
   color: #00B7FF;
 }
+
+.container {
+  border: 1px solid black;
+  width: 600px;
+  height: 500px;
+  display: flex;
+  justify-content: center;
+}
+
+.next_poem_style {
+  
+}

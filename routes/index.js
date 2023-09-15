@@ -21,8 +21,8 @@ loadWebAssembly();
 
 /* GET home page. */
 router.get('/', function(req, res, next) {
-  a = 5;
-  b = 4;
+  a = 3;
+  b = 3;
   const sum = addTwoNumbers(a, b);
   res.render('index', { title: sum });
   // res.send(`Sum: ${sum}`);
