@@ -7,7 +7,6 @@ var logger = require('morgan');
 
 // route handlers
 var indexRouter = require('./routes/index');
-var poemsRouter = require('./routes/poems');
 var usersRouter = require('./routes/users');
 
 // to create an instance
@@ -26,7 +25,6 @@ app.use(express.static('public'));
 
 // sets up routes
 app.get('/', indexRouter);
-app.use('/poems', poemsRouter);
 app.use('/users', usersRouter);
 
 // catch 404 and forward to error handler

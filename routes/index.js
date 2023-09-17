@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 
 const fs = require('fs');
-const internal = require('stream');
 const crypto = require("crypto").webcrypto;
 globalThis.crypto = crypto;
 require('../golang/wasm/wasm_exec.js');
@@ -24,8 +23,15 @@ router.get('/', function(req, res, next) {
   a = 3;
   b = 3;
   const sum = addTwoNumbers(a, b);
+  const poems = getPoems();
+  console.log("POEMS", poems)
+  console.log("SUM", sum)
   res.render('index', { title: sum });
   // res.send(`Sum: ${sum}`);
 });
+
+function getData() {
+  return getPoems()
+}
 
 module.exports = router;

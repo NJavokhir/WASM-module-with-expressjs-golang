@@ -3,11 +3,14 @@ package main
 import (
 	"encoding/json"
 	"fmt"
+	"log"
+	"os"
 
 	"net/http"
 
 	"github.com/rs/cors"
 
+	"github.com/joho/godotenv"
 	"gorm.io/driver/postgres"
 	"gorm.io/gorm"
 )
@@ -24,11 +27,6 @@ type Config struct {
 type Poem struct {
 	ID    uint
 	Title string
-}
-
-type ReturnValue struct {
-	ID int `json:"id"`
-	Title string `json:"title"`
 }
 
 func main() {
@@ -52,37 +50,34 @@ func getPoems(w http.ResponseWriter, r *http.Request) {
 	if err != nil {
         w.Header().Set("Content-Type", "application/json")
         w.WriteHeader(http.StatusInternalServerError)
-        json.NewEncoder(w).Encode(ReturnValue{
+        json.NewEncoder(w).Encode(Poem{
             Title: "Internal Server Error",
         })
         return
     }
 
-	// var poems []Poem
-	
-	// db.Table("poems").Select("id, title").Find(&poems)
-	
-	// poems[0] = Poem{
-	// 	ID: 1, 
-	// 	Title: "Static data",
-	// }
-
-	var myPoems []Poem
-	myPoems = append(myPoems, Poem{ID: 1, Title: "Static Data"})
+	var poems []Poem
+	db.Find(&poems)
 
 	w.Header().Set("Content-Type", "application/json")
-	json.NewEncoder(w).Encode(myPoems)
+	json.NewEncoder(w).Encode(poems)
 }
 
 func NewConnection() (*gorm.DB, error) {
+	err := godotenv.Load()
+	if err != nil {
+		log.Fatal("Error loading .env file")
+	}
+
     configurations := Config{
-        Host:     "localhost",
-        Port:     "5432",
-        Password: "Javohirjavohir1?",
-        User:     "postgres",
-        DBName:   "users",
-        SSLMode:  "disable",
+        Host:     os.Getenv("HOST"),
+        Port:     os.Getenv("POSTGRES_PORT"),
+        Password: os.Getenv("PASSWORD"),
+        User:     os.Getenv("USER"),
+        DBName:   os.Getenv("DBNAME"),
+        SSLMode:  os.Getenv("SSLMODE"),
     }
+
     dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", configurations.Host, configurations.Port, configurations.User, configurations.Password, configurations.DBName, configurations.SSLMode)
 	db, err := gorm.Open(postgres.New(postgres.Config{
 		DSN: dsn,

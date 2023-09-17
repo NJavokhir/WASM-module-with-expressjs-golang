@@ -1,8 +1,9 @@
 package main
 
 import (
-	// "fmt"
-	"log"
+	"encoding/json"
+	"fmt"
+	"io/ioutil"
 	"net/http"
 	"syscall/js"
 )
@@ -17,8 +18,8 @@ type Config struct {
 }
 
 type Poem struct {
-	ID    uint
-	Title string
+	ID    uint   `json:"ID"`
+	Title string `json:"Title"`
 }
 
 func addTwoNumbers(this js.Value, args []js.Value) interface{} {
@@ -28,17 +29,30 @@ func addTwoNumbers(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(sum)
 }
 
-func getPoems(this js.Value, args []js.Value) interface{} {
-	url := "http://localhost:9090/poems"
-
-	resp, err := http.Get(url)
+func getPoems(this js.Value, inputs []js.Value) interface{} {
+	response, err := http.Get("http://localhost:9090/poems")
 	if err != nil {
-		log.Fatal(err)
+		fmt.Println("Error:", err)
+		return nil
 	}
-	defer resp.Body.Close()
-		
-	return js.ValueOf(resp.Body)
+	defer response.Body.Close()
+
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil
+	}
+
+	var poems []Poem
+	err = json.Unmarshal(body, &poems)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil
+	}
+
+	return poems
 }
+
 
 func main() {
 	c := make(chan struct{}, 0)
