@@ -40,10 +40,11 @@ func main() {
 	})
 
 	handler := c.Handler(http.DefaultServeMux)
-	http.ListenAndServe(":9090", handler)
+	http.ListenAndServe(":9000", handler)
 }
 
 func getPoems(w http.ResponseWriter, r *http.Request) {
+	fmt.Println("Called to server")
 	db, err := NewConnection()
 	defer CloseConnection(db)
 

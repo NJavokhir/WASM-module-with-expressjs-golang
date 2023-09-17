@@ -30,9 +30,10 @@ func addTwoNumbers(this js.Value, args []js.Value) interface{} {
 }
 
 func getPoems(this js.Value, inputs []js.Value) interface{} {
-	response, err := http.Get("http://localhost:9090/poems")
+	url := "http://localhost:9000/poems"
+	response, err := http.Get(url)
 	if err != nil {
-		fmt.Println("Error:", err)
+		fmt.Println("Errorr:", err)
 		return nil
 	}
 	defer response.Body.Close()

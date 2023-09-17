@@ -2,7 +2,29 @@ extends layout
 
 block content
   h1= title
-  p Addition is #{title}
+  p #{poems.length} poems 
 
-  div.container= title 
-  button.next_poem_style(onclick="getData()") GET poem
+  div.container
+    - if (currentPoem)
+      p= currentPoem.Title
+    - else
+      p No poem available
+  button.next_poem_style(onclick="getNextPoem()") Next Poem
+
+  script.
+    var poems = !{JSON.stringify(poems)};
+    var currentIndex = 0;
+    var currentPoem = poems[currentIndex];
+
+    function getNextPoem() {
+      currentIndex++;
+      if (currentIndex >= poems.length) {
+        currentIndex = 0;
+      }
+      currentPoem = poems[currentIndex];
+      if (currentPoem) {
+        document.querySelector('.container p').innerText = currentPoem.Title;
+      } else {
+        document.querySelector('.container p').innerText = 'No poem available';
+      }
+    }

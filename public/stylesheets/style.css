@@ -10,7 +10,7 @@ a {
 .container {
   border: 1px solid black;
   width: 600px;
-  height: 500px;
+  height: 200px;
   display: flex;
   justify-content: center;
 }
