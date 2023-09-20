@@ -17,9 +17,9 @@ function loadWebAssembly() {
     });
 }
 
-// function getPoems() {
+function getPoems() {
   
-// }
+}
 
 loadWebAssembly();
 
@@ -34,13 +34,15 @@ async function getPoemsByAxios() {
   }
 }
 
+
 /* GET home page. */
 router.get('/', async function(req, res, next) {
   // Start the server
   // a = 3;
   // b = 3;
   // const sum = addTwoNumbers(a, b);
-  console.log("POEMS", getPoems());
+  const poemsResult = getPoems();
+  console.log("POEMS", poemsResult);
   res.render('index', { poems:  await getPoemsByAxios()});
 });
 

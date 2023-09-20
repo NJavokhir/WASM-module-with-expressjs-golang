@@ -1,10 +1,11 @@
 package main
 
 import (
+	// "encoding/json"
 	"encoding/json"
 	"fmt"
-	"io/ioutil"
-	"net/http"
+	// "io/ioutil"
+	// "net/http"
 	"syscall/js"
 
 	"gorm.io/driver/postgres"
@@ -46,10 +47,18 @@ func getPoems(this js.Value, inputs []js.Value) interface{} {
 
 	defer CloseConnection(db)
 
-	// var poems []Poem
-	// db.Find(&poems)
-	a := 5
-	return js.ValueOf(a)
+	var poems []Poem
+	db.Find(&poems)
+
+    // Convert the Go slice to a JavaScript array
+	poemsJSON, err := json.Marshal(poems)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil
+	}
+
+	return js.Global().Get("JSON").Call("parse", string(poemsJSON))
+	// return js.ValueOf(poems)
 }
 
 func NewConnection() (*gorm.DB, error) {
@@ -117,40 +126,6 @@ func CloseConnection(db *gorm.DB) {
 // 	fmt.Println("AAAPOEMSAAA", poems)
 // 	return js.ValueOf(poems)
 // }
-
-func fetch() []map[string]interface{} {
-    request, err := http.NewRequest("GET", "http://localhost:9000/poems", nil)
-    if err != nil {
-        fmt.Println(err)
-        return nil
-    }
-    response, err := http.DefaultClient.Do(request)
-    if err != nil {
-        fmt.Println(err)
-        return nil
-    }
-    defer response.Body.Close()
-
-    body, err := ioutil.ReadAll(response.Body)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return nil
-    }
-
-    var poems []map[string]interface{}
-    err = json.Unmarshal(body, &poems)
-    if err != nil {
-        fmt.Println("Error:", err)
-        return nil
-    }
-    return poems
-}
-
-func getPoemss(this js.Value, inputs []js.Value) interface{} {
-    poems := fetch()
-    fmt.Println("AAAPOEMSAAA", poems).
-    return js.ValueOf(poems)
-}
 
 func main() {
 	c := make(chan struct{}, 0)
