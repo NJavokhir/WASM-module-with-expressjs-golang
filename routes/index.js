@@ -17,9 +17,9 @@ function loadWebAssembly() {
     });
 }
 
-function getPoems() {
+// function getPoems() {
   
-}
+// }
 
 loadWebAssembly();
 

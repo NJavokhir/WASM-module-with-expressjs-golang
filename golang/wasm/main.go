@@ -4,6 +4,9 @@ import (
 	// "encoding/json"
 	"encoding/json"
 	"fmt"
+	"io/ioutil"
+	"net/http"
+
 	// "io/ioutil"
 	// "net/http"
 	"syscall/js"
@@ -38,17 +41,18 @@ func addTwoNumbers(this js.Value, args []js.Value) interface{} {
 	return js.ValueOf(sum)
 }
 
-func getPoems(this js.Value, inputs []js.Value) interface{} {
+func getPoemss(this js.Value, inputs []js.Value) interface{} {
+	fmt.Println("I am here!")
 	db, err := NewConnection()
 	if err != nil {
 		fmt.Println("Errorr:", err)
 		return nil
 	}
-
 	defer CloseConnection(db)
 
 	var poems []Poem
 	db.Find(&poems)
+	fmt.Println("PEOMS JSON", poems)
 
     // Convert the Go slice to a JavaScript array
 	poemsJSON, err := json.Marshal(poems)
@@ -56,12 +60,15 @@ func getPoems(this js.Value, inputs []js.Value) interface{} {
 		fmt.Println("Error:", err)
 		return nil
 	}
-
-	return js.Global().Get("JSON").Call("parse", string(poemsJSON))
-	// return js.ValueOf(poems)
+	returningValue := js.ValueOf(string(poemsJSON))
+	fmt.Println("RETURNING VALUE", returningValue)
+	fmt.Println("POEMSJSON", string(poemsJSON))
+	return returningValue
+	// return js.Global().Get("JSON").Call("parse", returningValue)
 }
 
 func NewConnection() (*gorm.DB, error) {
+	fmt.Println("I am in NEWCOnnection")
     configurations := Config{
 		Host:     "localhost",
         Port:     "5432",
@@ -72,9 +79,11 @@ func NewConnection() (*gorm.DB, error) {
     }
 	
     dsn := fmt.Sprintf("host=%s port=%s user=%s password=%s dbname=%s sslmode=%s", configurations.Host, configurations.Port, configurations.User, configurations.Password, configurations.DBName, configurations.SSLMode)
-	db, err := gorm.Open(postgres.New(postgres.Config{
-		DSN: dsn,
-	}), &gorm.Config{})
+	fmt.Println("DSN", dsn)
+	post := postgres.New(postgres.Config{DSN: dsn})
+	fmt.Println("POST", post)
+	db, err := gorm.Open(post, &gorm.Config{})
+	fmt.Println("DB", db)
 	if err != nil {
 		panic("Failed to create a connection to database")
 	}
@@ -90,42 +99,44 @@ func CloseConnection(db *gorm.DB) {
 	dbSQL.Close()
 }
 
-// func getPoems(this js.Value, inputs []js.Value) interface{} {
-// 	request, err := http.NewRequest("GET", "http://localhost:9000/poems", nil)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return nil
-// 	}
-// 	response, err := http.DefaultClient.Do(request)
-// 	if err != nil {
-// 		fmt.Println(err)
-// 		return nil
-// 	}
-// 	defer response.Body.Close()
+func getPoems(this js.Value, inputs []js.Value) interface{} {
+	request, err := http.NewRequest("GET", "http://localhost:9000/poems", nil)
+	// request, err := http.Get("http://localhost:9000/poems")
+	if err != nil {
+		fmt.Println("ERROR", err)
+		return nil
+	}
+	response, err := http.DefaultClient.Do(request)
+	if err != nil {
+		fmt.Println("ERROR 111", err)
+		return nil
+	}
 
-// 	// url := "http://localhost:9000/poems"
-// 	// response, err := http.Get(url)
-// 	// if err != nil {
-// 	// 	fmt.Println("Errorr:", err)
-// 	// 	return nil
-// 	// }
-// 	// defer response.Body.Close()
+	defer response.Body.Close()
 
-// 	body, err := ioutil.ReadAll(response.Body)
-// 	if err != nil {
-// 		fmt.Println("Error:", err)
-// 		return nil
-// 	}
+	// url := "http://localhost:9000/poems"
+	// response, err := http.Get(url)
+	// if err != nil {
+	// 	fmt.Println("Errorr:", err)
+	// 	return nil
+	// }
+	// defer response.Body.Close()
 
-// 	var poems []map[string]interface{}
-// 	err = json.Unmarshal(body, &poems)
-// 	if err != nil {
-// 		fmt.Println("Error:", err)
-// 		return nil
-// 	}
-// 	fmt.Println("AAAPOEMSAAA", poems)
-// 	return js.ValueOf(poems)
-// }
+	body, err := ioutil.ReadAll(response.Body)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil
+	}
+
+	var poems []map[string]interface{}
+	err = json.Unmarshal(body, &poems)
+	if err != nil {
+		fmt.Println("Error:", err)
+		return nil
+	}
+	fmt.Println("AAAPOEMSAAA", poems)
+	return js.ValueOf(poems)
+}
 
 func main() {
 	c := make(chan struct{}, 0)
